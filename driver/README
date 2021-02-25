@@ -1,0 +1,50 @@
+How to build KV UDD : User Level Device Driver based on spdk 
+
+
+1. Pre-Requisites
+==============
+sudo apt-get install -y gcc g++ make libcunit1-dev libaio-dev libssl-dev
+sudo apt-get install xfsprogs
+sudo apt-get install linux-tools-common linux-cloud-tools-4.2.0-16 linux-tools-4.2.0-16 linux-tools-4.2.0-16-generic linux-cloud-tools-4.2.0-16-generic
+sudo su
+
+
+2. Build KV UDD (For developer, need to build DPDK/SPDK prior to build KV UDD)
+==========
+$ make clean
+$ make
+$ make install
+
+3. Build DPDK
+==========
+cd dpdk-18.05
+make install T=x86_64-native-linuxapp-gcc EXTRA_CFLAGS="-fPIC" DESTDIR=. V=99
+
+to build DPDK without -fPIC
+make install T=x86_64-native-linuxapp-gcc DESTDIR=.
+
+to build DPDK 32bit
+make install T=i686-native-linuxapp-gcc EXTRA_CFLAGS="-fPIC" DESTDIR=.
+
+4. Build SPDK
+==========
+cd spdk-18.04.1
+./configure --with-dpdk=../dpdk-18.05
+make
+
+
+=================================================================================
+
+5. Build fio plugin
+========
+
+compile fio
+	1) git clone https://github.com/axboe/fio
+	2) cd fio && git checkout fio-2.21
+	3) make
+
+compile spdk
+	1) ./configure --with-fio=${FIO_SOURCE_DIR} --with-dpdk=${DPDK_BINARY_DIR}
+	2) make DPDK_DIR=../dpdk/x86_64-native-linuxapp-gcc/ EXTRA_CFLAGS=-fPIC V=1
+
+

@@ -1,0 +1,90 @@
+OpenMPDK (Open Memory Platform Development Kit)
+================================================
+The Open Memory Platform Development Kit (OpenMPDK) will provide proper SW stack of OS and application to enabling solution devices (NVMe SSDs and future solution devices). 
+It will include user level drivers, kernel drivers, sample applications and tools.
+
+The development kit currently includes:
+•	User Level NVMe driver (uNVMe driver). 
+
+uNVMe driver
+uNVMe driver is an user space NVMe driver implemented as a library to which the sample applications can be linked with. Using the SDK, the sample will initialize the NVMe devices, submit and process the I/Os directly to the NVMe devices with a polling mode. It can reduce overhead which are occurred by kernel context switched and I/O handling on interrupt mode and provide optimized performance with lower latency SSD such as NVMe SSDs.
+This release also includes the sample applications and tools for the uNVMe driver. An application will be combined with the uNVMe driver into one process and takes the ownership of a device upon execution and controls the device. An NVMe device can only be accessed by one application at any given time  and an application can access multiple devices simultaneously. The sample applications can control the device using the provided APIs described below.
+
+
+================================================
+Prerequisites (Please run commands below as root)
+
+
+1. DPDK/SPDK
+	// Install OS dependent packages in an autonomous manner
+	#${MPDK_HOME}/script/pkgdep.sh
+
+	// Or, manual installation
+	//Ubuntu/Debian
+	#apt-get install -y gcc g++ make libcunit1-dev libaio-dev libssl-dev libgflags-dev check
+	#apt-get install xfsprogs
+	#apt-get install linux-tools-common linux-cloud-tools-`uname -r` linux-tools-`uname -r` linux-tools-`uname -r`-generic linux-cloud-tools-`uname -r`-generic
+	-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	//Centos
+	# rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+	# yum update
+	# yum install google-perftools google-perftools-devel
+	# yum install CUnit-devel openssl-devel gflags-devel libaio-devel check-devel scons
+
+2. Other Apps
+	fuse3: https://github.com/libfuse/libfuse/
+	libcheck - unit test framework for C : https://github.com/libcheck/check
+
+3. Optional libraries
+	srandom - fast random generator : https://github.com/josenk/srandom
+	valgrind - a suite of tools for debugging and profiling : http://repo.or.cz/valgrind.git
+		# sudo apt-get install valgrind
+		# sudo valgrind --tool=memcheck ./sdk_perf_async
+
+================================================
+Installation (Please run commands below as root)
+
+ 
+build dpdk/spdk
+#make.sh intel
+
+
+build libuio.a
+#make.sh all (Note: This is identical with ./make.sh driver && ./make.sh io && ./make.sh sdk)
+
+build app
+#make.sh app
+
+
+================================================
+Source tree
+
+uNVMe/
+├── app
+│   ├── blobfs_perf
+│   ├── external
+│   │   └── fio
+│   ├── fio_plugin
+│   ├── fuse
+│   ├── mkfs
+│   └── unvme_rocksdb
+├── bin
+├── doc
+├── driver
+│   ├── core
+│   ├── external
+│   │   ├── common
+│   │   ├── dpdk-18.05
+│   │   └── spdk-18.04.1
+│   ├── include
+│   └── test
+├── include
+├── io
+│   ├── src
+│   │   ├── common
+│   │   └── slab
+│   └── tests
+├── mk
+└── script
+
